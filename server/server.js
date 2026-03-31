@@ -15,7 +15,15 @@ const app = express();
 connectDB();
 
 // Middleware
-app.use(cors());
+const frontendUrl = process.env.NODE_ENV === 'production'
+  ? process.env.FRONTEND_URL // This environment variable will be set on Render
+  : 'http://localhost:5173'; // For local Vite development
+
+app.use(cors({
+  origin: frontendUrl,
+  credentials: true, // Important if you handle cookies/sessions, even if using JWT mostly
+}));
+
 app.use(express.json()); // For parsing application/json
 app.use(morgan('dev')); // Logger for requests
 
