@@ -2,7 +2,7 @@ import React from 'react';
 import Card from '../../components/Card';
 import { useShipments } from '../../context/ShipmentContext';
 import LoadingSpinner from '../../components/LoadingSpinner';
-import { FaBoxes, FaUsers, FaTruckLoading, FaCheckCircle } from 'react-icons/fa';
+import { FaBoxes, FaUsers, FaTruckLoading, FaCheckCircle, FaHourglassHalf } from 'react-icons/fa';
 
 const AdminDashboard = () => {
   const { shipments, loading, error } = useShipments();
@@ -32,7 +32,7 @@ const AdminDashboard = () => {
           <div><h3 className="text-lg font-semibold text-gray-600">Delivered</h3><p className="text-3xl font-bold">{deliveredShipments}</p></div>
         </Card>
         <Card className="flex items-center gap-4">
-          <FaUsers className="text-secondary text-4xl" />
+          <FaHourglassHalf className="text-accent text-4xl" />
           <div><h3 className="text-lg font-semibold text-gray-600">Pending</h3><p className="text-3xl font-bold">{pendingShipments}</p></div>
         </Card>
       </div>

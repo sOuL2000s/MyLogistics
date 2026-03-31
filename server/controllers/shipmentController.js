@@ -16,21 +16,30 @@ const createShipment = asyncHandler(async (req, res) => {
     dimensions,
     expectedDeliveryDate,
     cost,
-    userId // Optional: if an admin creates a shipment for a specific user
+    userId, // Optional: if an admin creates a shipment for a specific user
   } = req.body;
 
-  if (!sender || !receiver || !origin || !destination || !itemDescription || !weight || !dimensions || !expectedDeliveryDate || !cost) {
+  // Enhanced validation
+  if (
+    !sender?.name || !sender?.address || !sender?.contact ||
+    !receiver?.name || !receiver?.address || !receiver?.contact ||
+    !origin || !destination || !itemDescription ||
+    !weight || !dimensions?.length || !dimensions?.width || !dimensions?.height ||
+    !expectedDeliveryDate || !cost
+  ) {
     res.status(400);
-    throw new Error('Please fill all required fields for the shipment.');
+    throw new Error('Please fill all required fields for the shipment, including full sender/receiver details and dimensions.');
   }
 
   // Set initial status history
-  const statusHistory = [{
-    status: 'Pending',
-    location: origin,
-    notes: 'Shipment created and awaiting processing.',
-    timestamp: new Date()
-  }];
+  const statusHistory = [
+    {
+      status: 'Pending',
+      location: origin,
+      notes: 'Shipment created and awaiting processing.',
+      timestamp: new Date(),
+    },
+  ];
 
   const shipmentData = {
     sender,
@@ -41,6 +50,7 @@ const createShipment = asyncHandler(async (req, res) => {
     weight,
     dimensions,
     currentStatus: 'Pending',
+    currentLocation: origin, // Set initial current location
     statusHistory,
     expectedDeliveryDate,
     cost,
@@ -115,8 +125,8 @@ const updateShipment = asyncHandler(async (req, res) => {
     currentStatus, // Can be updated by admin
     expectedDeliveryDate,
     cost,
-    location, // For status history
-    notes // For status history
+    location, // New: for status update location
+    notes, // New: for status update notes
   } = req.body;
 
   let shipment = await Shipment.findById(req.params.id);
@@ -137,14 +147,15 @@ const updateShipment = asyncHandler(async (req, res) => {
     shipment.dimensions = dimensions || shipment.dimensions;
     shipment.expectedDeliveryDate = expectedDeliveryDate || shipment.expectedDeliveryDate;
     shipment.cost = cost || shipment.cost;
+    shipment.currentLocation = location || shipment.currentLocation; // Admin can update current location directly
 
     if (currentStatus && shipment.currentStatus !== currentStatus) {
       shipment.currentStatus = currentStatus;
       shipment.statusHistory.push({
         status: currentStatus,
-        location: location || shipment.statusHistory[shipment.statusHistory.length -1]?.location || shipment.origin,
+        location: location || shipment.currentLocation, // Use provided location or shipment's current
         notes: notes || `Status updated to ${currentStatus}`,
-        timestamp: new Date()
+        timestamp: new Date(),
       });
     }
   } else {

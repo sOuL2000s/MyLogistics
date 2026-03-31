@@ -1,5 +1,5 @@
-import { lazy, Suspense } from 'react';
-import { Routes, Route, useLocation } from 'react-router-dom';
+import { lazy, Suspense, useState } from 'react';
+import { Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import ProtectedRoute from './components/ProtectedRoute';
 import Navbar from './components/Navbar';
 import Sidebar from './components/Sidebar';
@@ -22,39 +22,43 @@ const NotFound = lazy(() => import('./pages/NotFound'));
 function App() {
   const { user } = useAuth();
   const location = useLocation();
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const isAdminRoute = location.pathname.startsWith('/admin');
   const isAuthPage = location.pathname === '/login' || location.pathname === '/register';
   const isPublicTracking = location.pathname.startsWith('/track');
 
+  const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
+
   // Determine which sidebar to show or no sidebar
   const renderSidebar = () => {
     if (!user || isAuthPage || isPublicTracking) return null;
-    if (user.role === 'admin' && isAdminRoute) {
-      return <AdminSidebar />;
-    }
-    return <Sidebar />;
+    const SidebarComponent = user.role === 'admin' && isAdminRoute ? AdminSidebar : Sidebar;
+    return <SidebarComponent isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />;
   };
 
-  const mainContentClass = user && !isAuthPage && !isPublicTracking ? 'ml-0 lg:ml-64 p-4 lg:p-8' : 'p-4 lg:p-8';
+  const mainContentClass =
+    user && !isAuthPage && !isPublicTracking
+      ? `flex-1 transition-all duration-300 ${isSidebarOpen ? 'ml-64' : 'lg:ml-64'} p-4 lg:p-8`
+      : 'p-4 lg:p-8';
   const displayNavbar = !isPublicTracking;
 
   return (
     <div className="min-h-screen flex flex-col bg-light">
-      {displayNavbar && <Navbar />}
+      {displayNavbar && <Navbar toggleSidebar={toggleSidebar} />}
       {renderSidebar()}
-      <main className={`flex-1 transition-all duration-300 ${mainContentClass}`}>
+      <main className={`transition-all duration-300 ${mainContentClass}`}>
         <Suspense fallback={<LoadingSpinner />}>
           <Routes>
             {/* Public Routes */}
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
-            <Route path="/track" element={<PublicTracking />} /> {/* Base route for public tracking */}
+            <Route path="/track" element={<PublicTracking />} />
             <Route path="/track/:trackingNumber" element={<PublicTracking />} />
 
             {/* User Protected Routes */}
             <Route element={<ProtectedRoute allowedRoles={['user', 'admin']} />}>
-              <Route path="/" element={<Dashboard />} />
+              <Route path="/" element={<Navigate to="/dashboard" replace />} />
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/shipments/create" element={<CreateShipment />} />
               <Route path="/shipments/:id" element={<ShipmentDetails />} />

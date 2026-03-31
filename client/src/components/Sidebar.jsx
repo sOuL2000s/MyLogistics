@@ -1,22 +1,29 @@
 import { Link, NavLink } from 'react-router-dom';
-import { FaChartBar, FaPlusSquare, FaSignOutAlt, FaBoxes } from 'react-icons/fa';
+import { FaChartBar, FaPlusSquare, FaSignOutAlt, FaBoxes, FaTimes } from 'react-icons/fa';
 import { useAuth } from '../hooks/useAuth';
 
-const Sidebar = () => {
+const Sidebar = ({ isOpen, toggleSidebar }) => {
   const { logout } = useAuth();
 
   const navLinks = [
     { name: 'Dashboard', path: '/dashboard', icon: <FaChartBar /> },
     { name: 'Create Shipment', path: '/shipments/create', icon: <FaPlusSquare /> },
-    { name: 'My Shipments', path: '/dashboard', icon: <FaBoxes /> }, 
+    { name: 'My Shipments', path: '/dashboard', icon: <FaBoxes /> },
   ];
 
   return (
-    <aside className="fixed top-0 left-0 h-full w-64 bg-dark text-white p-6 shadow-lg z-40 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out">
-      <div className="flex items-center justify-center mb-10 mt-2">
+    <aside
+      className={`fixed top-0 left-0 h-full w-64 bg-dark text-white p-6 shadow-lg z-40 transition-transform duration-300 ease-in-out ${
+        isOpen ? 'translate-x-0' : '-translate-x-full'
+      } lg:translate-x-0`}
+    >
+      <div className="flex items-center justify-between mb-10 mt-2">
         <Link to="/dashboard" className="text-3xl font-bold text-primary flex items-center gap-2">
           User Panel
         </Link>
+        <button onClick={toggleSidebar} className="text-white lg:hidden">
+          <FaTimes className="text-2xl" />
+        </button>
       </div>
       <nav>
         <ul className="space-y-3">

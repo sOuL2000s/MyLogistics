@@ -1,15 +1,23 @@
 import { Link } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import Button from './Button';
-import { FaUserCircle, FaTruck } from 'react-icons/fa';
+import { FaUserCircle, FaTruck, FaBars } from 'react-icons/fa';
 
-const Navbar = () => {
+const Navbar = ({ toggleSidebar }) => {
   const { user, logout } = useAuth();
 
   return (
     <nav className="bg-dark p-4 shadow-lg z-30 sticky top-0 w-full">
       <div className="container mx-auto flex justify-between items-center">
-        <Link to={user ? (user.role === 'admin' ? '/admin' : '/dashboard') : '/'} className="text-white text-2xl font-bold flex items-center gap-2">
+        {user && (
+          <button onClick={toggleSidebar} className="text-white lg:hidden mr-4">
+            <FaBars className="text-2xl" />
+          </button>
+        )}
+        <Link
+          to={user ? (user.role === 'admin' ? '/admin' : '/dashboard') : '/'}
+          className="text-white text-2xl font-bold flex items-center gap-2"
+        >
           <FaTruck className="text-primary" /> LogisticsApp
         </Link>
         <div className="flex items-center space-x-4">

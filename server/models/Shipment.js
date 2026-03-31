@@ -40,6 +40,10 @@ const shipmentSchema = mongoose.Schema(
       width: { type: Number, required: true },
       height: { type: Number, required: true },
     },
+    currentLocation: {
+      type: String,
+      default: 'Unknown',
+    },
     currentStatus: {
       type: String,
       enum: ['Pending', 'In Transit', 'Out for Delivery', 'Delivered', 'Failed Attempt', 'Cancelled'],
@@ -87,7 +91,7 @@ shipmentSchema.pre('save', function (next) {
 });
 
 // Update status history when currentStatus changes
-shipmentSchema.pre('findOneAndUpdate', async function(next) {
+shipmentSchema.pre('findOneAndUpdate', async function (next) {
   const update = this.getUpdate();
   if (update.$set && update.$set.currentStatus) {
     const docToUpdate = await this.model.findOne(this.getQuery());
@@ -95,11 +99,16 @@ shipmentSchema.pre('findOneAndUpdate', async function(next) {
       update.$push = {
         statusHistory: {
           status: update.$set.currentStatus,
-          location: update.$set.currentLocation || docToUpdate.statusHistory[docToUpdate.statusHistory.length -1]?.location || 'N/A',
-          notes: `Status updated to ${update.$set.currentStatus}`,
-          timestamp: new Date()
-        }
+          location: update.$set.currentLocation || docToUpdate.currentLocation || docToUpdate.origin,
+          notes: update.$set.notes || `Status updated to ${update.$set.currentStatus}`,
+          timestamp: new Date(),
+        },
       };
+      // Also update the top-level currentLocation if provided
+      if (update.$set.currentLocation) {
+        docToUpdate.currentLocation = update.$set.currentLocation;
+        await docToUpdate.save({ validateBeforeSave: false });
+      }
     }
   }
   next();
