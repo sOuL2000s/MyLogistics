@@ -5,6 +5,7 @@ const connectDB = require('./config/db');
 const authRoutes = require('./routes/authRoutes');
 const shipmentRoutes = require('./routes/shipmentRoutes');
 const userRoutes = require('./routes/userRoutes');
+const paymentRoutes = require('./routes/paymentRoutes');
 const errorHandler = require('./middleware/errorHandler');
 const cors = require('cors');
 const morgan = require('morgan');
@@ -31,6 +32,7 @@ app.use(morgan('dev')); // Logger for requests
 app.use('/api/auth', authRoutes);
 app.use('/api/shipments', shipmentRoutes);
 app.use('/api/users', userRoutes); // Admin user management
+app.use('/api/payments', paymentRoutes);
 
 // Public tracking route
 app.get('/api/track/:trackingNumber', require('./controllers/shipmentController').getPublicTracking);

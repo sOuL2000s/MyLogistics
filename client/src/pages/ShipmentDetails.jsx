@@ -4,9 +4,12 @@ import api from '../services/api';
 import Card from '../components/Card';
 import StatusBadge from '../components/StatusBadge';
 import LoadingSpinner from '../components/LoadingSpinner';
+import Button from '../components/Button';
 import { toast } from 'react-toastify';
+import { useAuth } from '../hooks/useAuth';
 
 const ShipmentDetails = () => {
+  const { user } = useAuth();
   const { id } = useParams();
   const [shipment, setShipment] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -30,6 +33,51 @@ const ShipmentDetails = () => {
   }, [id]);
 
   if (loading) return <LoadingSpinner className="h-64" />;
+  const handlePayment = async (shipment) => {
+    try {
+      // 1. Create order on backend
+      const { data: order } = await api.post(`/payments/order/${shipment._id}`);
+
+      // 2. Open Razorpay Checkout
+      const options = {
+        key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+        amount: order.amount,
+        currency: order.currency,
+        name: 'Logistics App',
+        description: `Payment for Shipment #${shipment.trackingNumber}`,
+        order_id: order.id,
+        handler: async (response) => {
+          try {
+            // 3. Verify payment on backend
+            await api.post('/payments/verify', {
+              ...response,
+              shipmentId: shipment._id
+            });
+            toast.success('Payment successful!');
+            // Refresh shipment details
+            const res = await api.get(`/shipments/${id}`);
+            setShipment(res.data);
+          } catch (err) {
+            toast.error('Payment verification failed.');
+          }
+        },
+        prefill: {
+          name: user.name,
+          email: user.email,
+          contact: shipment.sender.contact,
+        },
+        theme: {
+          color: '#3b82f6',
+        },
+      };
+
+      const rzp = new window.Razorpay(options);
+      rzp.open();
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Payment initialization failed.');
+    }
+  };
+
   if (error) return <div className="text-center text-error mt-8">Error: {error}</div>;
   if (!shipment) return <div className="text-center text-gray-600 mt-8">Shipment not found.</div>;
 
@@ -68,7 +116,20 @@ const ShipmentDetails = () => {
             <p>
               <strong>Cost:</strong> ${shipment.cost.toFixed(2)}
             </p>
+            <p>
+              <strong>Payment Status:</strong> 
+              <span className={`ml-2 px-2 py-1 rounded text-xs font-bold ${shipment.paymentStatus === 'Paid' ? 'bg-success text-white' : 'bg-error text-white'}`}>
+                {shipment.paymentStatus}
+              </span>
+            </p>
           </div>
+          {shipment.paymentStatus !== 'Paid' && user && user.role === 'user' && (
+            <div className="mt-6">
+              <Button onClick={() => handlePayment(shipment)} className="w-full">
+                Pay Now with Razorpay
+              </Button>
+            </div>
+          )}
         </div>
 
         <div>

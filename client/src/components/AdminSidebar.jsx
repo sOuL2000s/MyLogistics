@@ -1,5 +1,5 @@
 import { Link, NavLink } from 'react-router-dom';
-import { FaBoxes, FaUsersCog, FaChartLine, FaSignOutAlt, FaPlusSquare, FaTimes } from 'react-icons/fa';
+import { FaBoxes, FaUsersCog, FaChartLine, FaChartBar, FaSignOutAlt, FaPlusSquare, FaTimes } from 'react-icons/fa';
 import { useAuth } from '../hooks/useAuth';
 
 const AdminSidebar = ({ isOpen, toggleSidebar }) => {
@@ -9,7 +9,8 @@ const AdminSidebar = ({ isOpen, toggleSidebar }) => {
     { name: 'Dashboard', path: '/admin', icon: <FaChartLine /> },
     { name: 'Manage Shipments', path: '/admin/shipments', icon: <FaBoxes /> },
     { name: 'Manage Users', path: '/admin/users', icon: <FaUsersCog /> },
-    { name: 'Create Shipment', path: '/shipments/create', icon: <FaPlusSquare /> }, // Admin can also create
+    { name: 'Reports', path: '/admin/reports', icon: <FaChartBar /> },
+    { name: 'Create Shipment', path: '/shipments/create', icon: <FaPlusSquare /> },
   ];
 
   return (

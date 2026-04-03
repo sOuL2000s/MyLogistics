@@ -69,6 +69,28 @@ const shipmentSchema = mongoose.Schema(
       type: Number,
       required: true,
     },
+    paymentStatus: {
+      type: String,
+      enum: ['Unpaid', 'Paid', 'Pending Verification'],
+      default: 'Unpaid',
+    },
+    razorpayOrderId: {
+      type: String,
+    },
+    razorpayPaymentId: {
+      type: String,
+    },
+    razorpaySignature: {
+      type: String,
+    },
+    assignedDriver: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required: false,
+    },
+    proofOfDelivery: {
+      type: String, // URL to image
+    },
     // Optional: link shipment to a user if created by a specific user
     user: {
       type: mongoose.Schema.Types.ObjectId,

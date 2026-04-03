@@ -20,7 +20,12 @@ const Navbar = ({ toggleSidebar }) => {
         >
           <FaTruck className="text-primary" /> LogisticsApp
         </Link>
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center space-x-6">
+          <div className="hidden md:flex space-x-4 text-white">
+            <Link to="/services" className="hover:text-primary">Services</Link>
+            <Link to="/pricing" className="hover:text-primary">Pricing</Link>
+            <Link to="/contact" className="hover:text-primary">Contact</Link>
+          </div>
           {user ? (
             <>
               <span className="text-white text-lg flex items-center gap-2">

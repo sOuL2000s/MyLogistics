@@ -187,6 +187,40 @@ const deleteShipment = asyncHandler(async (req, res) => {
   res.status(200).json({ message: 'Shipment removed' });
 });
 
+// @desc    Generate simple Invoice Data
+// @route   GET /api/shipments/:id/invoice
+// @access  Private
+const getShipmentInvoice = asyncHandler(async (req, res) => {
+  const shipment = await Shipment.findById(req.params.id).populate('user', 'name email');
+
+  if (!shipment) {
+    res.status(404);
+    throw new Error('Shipment not found');
+  }
+
+  // Auth check
+  if (req.user.role !== 'admin' && shipment.user?._id.toString() !== req.user._id.toString()) {
+    res.status(403);
+    throw new Error('Not authorized');
+  }
+
+  const invoice = {
+    invoiceNumber: `INV-${shipment.trackingNumber}`,
+    date: shipment.createdAt,
+    dueDate: shipment.expectedDeliveryDate,
+    customer: shipment.sender,
+    items: [{
+      description: shipment.itemDescription,
+      weight: shipment.weight,
+      price: shipment.cost
+    }],
+    total: shipment.cost,
+    status: shipment.paymentStatus
+  };
+
+  res.status(200).json(invoice);
+});
+
 // @desc    Get public tracking information by tracking number
 // @route   GET /api/track/:trackingNumber
 // @access  Public
@@ -217,6 +251,44 @@ const getPublicTracking = asyncHandler(async (req, res) => {
   });
 });
 
+// @desc    Assign driver to shipment
+// @route   PUT /api/shipments/:id/assign
+// @access  Private/Admin
+const assignDriver = asyncHandler(async (req, res) => {
+  const { driverId } = req.body;
+  const shipment = await Shipment.findById(req.params.id);
+
+  if (!shipment) {
+    res.status(404);
+    throw new Error('Shipment not found');
+  }
+
+  const driver = await User.findById(driverId);
+  if (!driver || driver.role !== 'driver') {
+    res.status(400);
+    throw new Error('Valid driver ID required');
+  }
+
+  shipment.assignedDriver = driverId;
+  shipment.statusHistory.push({
+    status: shipment.currentStatus,
+    location: shipment.currentLocation,
+    notes: `Driver ${driver.name} assigned to shipment.`,
+    timestamp: new Date()
+  });
+
+  await shipment.save();
+  res.status(200).json(shipment);
+});
+
+// @desc    Get shipments assigned to driver
+// @route   GET /api/shipments/driver/my
+// @access  Private/Driver
+const getDriverShipments = asyncHandler(async (req, res) => {
+  const shipments = await Shipment.find({ assignedDriver: req.user._id });
+  res.status(200).json(shipments);
+});
+
 module.exports = {
   createShipment,
   getAllShipments,
@@ -225,4 +297,6 @@ module.exports = {
   updateShipment,
   deleteShipment,
   getPublicTracking,
+  assignDriver,
+  getDriverShipments,
 };

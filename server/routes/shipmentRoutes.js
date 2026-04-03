@@ -7,9 +7,12 @@ const {
   getShipmentById,
   updateShipment,
   deleteShipment,
+  assignDriver,
+  getDriverShipments,
 } = require('../controllers/shipmentController');
 const protect = require('../middleware/authMiddleware');
 const admin = require('../middleware/adminMiddleware');
+const driver = require('../middleware/driverMiddleware');
 
 // User and Admin access
 router.route('/').post(protect, createShipment);
@@ -17,6 +20,8 @@ router.route('/my').get(protect, getMyShipments); // Get shipments specific to t
 
 // Admin only routes
 router.route('/admin').get(protect, admin, getAllShipments); // Get all shipments for admin
+router.route('/driver/my').get(protect, driver, getDriverShipments);
+router.route('/:id/assign').put(protect, admin, assignDriver);
 router
   .route('/:id')
   .get(protect, getShipmentById) // User can view their own, Admin can view all

@@ -21,11 +21,22 @@ const userSchema = mongoose.Schema(
       required: [true, 'Please add a password'],
       minlength: 6,
     },
+    phone: {
+      type: String,
+      unique: true,
+      sparse: true, // Allows nulls while keeping uniqueness for others
+    },
     role: {
       type: String,
-      enum: ['user', 'admin'],
+      enum: ['user', 'admin', 'driver'],
       default: 'user',
     },
+    isVerified: {
+      type: Boolean,
+      default: false,
+    },
+    otp: String,
+    otpExpire: Date,
   },
   {
     timestamps: true,
