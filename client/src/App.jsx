@@ -53,15 +53,22 @@ function App() {
 
   const mainContentClass =
     user && !isAuthPage && !isPublicPage
-      ? `flex-1 transition-all duration-300 ${isSidebarOpen ? 'lg:ml-64' : 'lg:ml-64'} p-4 lg:p-8`
-      : 'p-0'; 
+      ? `flex-1 transition-all duration-300 lg:ml-64 p-4 md:p-6 lg:p-8 w-full overflow-x-hidden`
+      : 'w-full p-0'; 
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#fdfdfd] selection:bg-primary/20">
+    <div className="min-h-screen flex flex-col bg-[#f8fafc] selection:bg-primary/20">
       <Navbar toggleSidebar={toggleSidebar} />
-      <div className="flex flex-1">
+      <div className="flex flex-1 relative">
         {renderSidebar()}
-        <main className={`w-full ${mainContentClass} animate-fade-in`}>
+        {/* Overlay for mobile sidebar */}
+        {isSidebarOpen && (
+          <div 
+            className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-30 lg:hidden"
+            onClick={toggleSidebar}
+          ></div>
+        )}
+        <main className={`${mainContentClass} animate-fade-in`}>
         <Suspense fallback={<LoadingSpinner />}>
           <Routes>
             {/* Public Routes */}

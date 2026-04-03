@@ -244,39 +244,39 @@ const ShipmentDetails = () => {
       </Card>
 
       <Card className="mt-8 border-none shadow-soft overflow-hidden !p-0">
-        <div className="bg-slate-50 px-8 py-5 border-b border-slate-100">
-          <h2 className="text-xl font-black text-dark tracking-tight">Tracking Timeline</h2>
+        <div className="bg-slate-50 px-5 md:px-8 py-5 border-b border-slate-100">
+          <h2 className="text-lg md:text-xl font-black text-dark tracking-tight">Tracking Timeline</h2>
         </div>
-        <div className="p-8">
+        <div className="p-5 md:p-8">
           <div className="relative">
             {/* Vertical Line */}
-            <div className="absolute left-4 top-0 bottom-0 w-0.5 bg-slate-100 ml-[-1px]"></div>
+            <div className="absolute left-3.5 md:left-4 top-0 bottom-0 w-0.5 bg-slate-100 ml-[-1px]"></div>
             
-            <div className="space-y-10 relative">
+            <div className="space-y-8 md:space-y-10 relative">
               {shipment.statusHistory.length > 0 ? (
                 [...shipment.statusHistory].reverse().map((history, index) => {
                   const isLatest = index === 0;
                   return (
-                    <div key={index} className="flex gap-6 items-start">
-                      <div className={`relative z-10 w-8 h-8 rounded-full flex items-center justify-center border-4 border-white shadow-sm transition-transform hover:scale-110 ${isLatest ? 'bg-primary' : 'bg-slate-300'}`}>
-                        <div className={`w-2 h-2 rounded-full bg-white ${isLatest ? 'animate-ping' : ''}`}></div>
+                    <div key={index} className="flex gap-4 md:gap-6 items-start">
+                      <div className={`relative z-10 w-7 h-7 md:w-8 md:h-8 rounded-full flex-shrink-0 flex items-center justify-center border-4 border-white shadow-sm transition-transform hover:scale-110 ${isLatest ? 'bg-primary' : 'bg-slate-300'}`}>
+                        <div className={`w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-white ${isLatest ? 'animate-pulse' : ''}`}></div>
                       </div>
-                      <div className="flex-1">
+                      <div className="flex-1 min-w-0">
                         <div className="flex flex-col md:flex-row md:items-center justify-between gap-1 mb-2">
-                          <h4 className={`text-lg font-bold ${isLatest ? 'text-primary' : 'text-slate-600'}`}>
+                          <h4 className={`text-base md:text-lg font-bold ${isLatest ? 'text-primary' : 'text-slate-600'}`}>
                             {history.status}
                           </h4>
-                          <span className="text-xs font-semibold text-slate-400 bg-slate-50 px-2 py-1 rounded-md border border-slate-100 uppercase">
+                          <span className="text-[10px] md:text-xs font-bold text-slate-400 bg-slate-50 px-2 py-1 rounded-md border border-slate-100 uppercase inline-block self-start">
                             {new Date(history.timestamp).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' })}
                           </span>
                         </div>
-                        <div className="bg-white rounded-2xl border border-slate-100 p-4 shadow-sm hover:shadow-md transition-shadow">
+                        <div className="bg-white rounded-xl md:rounded-2xl border border-slate-100 p-3 md:p-4 shadow-sm hover:shadow-md transition-shadow">
                           {history.location && (
-                            <p className="text-sm font-bold text-slate-700 flex items-center gap-2 mb-1">
+                            <p className="text-xs md:text-sm font-bold text-slate-700 flex items-center gap-2 mb-1">
                               <span className="w-1.5 h-1.5 rounded-full bg-slate-300"></span> {history.location}
                             </p>
                           )}
-                          {history.notes && <p className="text-sm text-slate-500 italic leading-relaxed">"{history.notes}"</p>}
+                          {history.notes && <p className="text-xs md:text-sm text-slate-500 italic leading-relaxed">"{history.notes}"</p>}
                         </div>
                       </div>
                     </div>

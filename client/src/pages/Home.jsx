@@ -16,40 +16,41 @@ const Home = () => {
   return (
     <div className="flex flex-col animate-fade-in">
       {/* Hero Section */}
-      <section className="relative bg-dark overflow-hidden py-24 md:py-32 px-4">
+      <section className="relative bg-slate-950 overflow-hidden py-20 md:py-32 lg:py-40 px-4">
         {/* Background Decorative Elements */}
-        <div className="absolute top-0 left-0 w-full h-full overflow-hidden z-0 opacity-20">
+        <div className="absolute top-0 left-0 w-full h-full overflow-hidden z-0 opacity-20 pointer-events-none">
             <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[60%] bg-primary rounded-full blur-[120px]"></div>
             <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[60%] bg-primary-dark rounded-full blur-[120px]"></div>
         </div>
 
-        <div className="container mx-auto text-center relative z-10">
-          <h1 className="text-5xl md:text-7xl font-extrabold mb-6 text-white leading-tight">
-            Logistics Reimagined <br />
-            <span className="text-primary-light">Fast. Safe. Global.</span>
+        <div className="max-w-6xl mx-auto text-center relative z-10">
+          <h1 className="text-4xl sm:text-5xl md:text-7xl font-black mb-6 text-white leading-[1.1] tracking-tight">
+            Logistics <span className="text-primary-light">Reimagined</span> <br className="hidden md:block" />
+            Fast. Safe. <span className="text-primary">Global.</span>
           </h1>
-          <p className="text-lg md:text-2xl mb-12 text-slate-300 max-w-3xl mx-auto font-light">
-            Empowering businesses and individuals with a smarter way to ship. Track, manage, and deliver anything, anywhere.
+          <p className="text-base sm:text-lg md:text-xl mb-10 text-slate-400 max-w-2xl mx-auto font-medium">
+            Empowering businesses and individuals with a smarter way to ship. Track, manage, and deliver anything, anywhere in the world.
           </p>
           
-          <form onSubmit={handleTrack} className="max-w-2xl mx-auto bg-white/10 backdrop-blur-md p-3 rounded-3xl shadow-elevated border border-white/20 flex flex-col md:flex-row gap-3">
+          <form onSubmit={handleTrack} className="max-w-2xl mx-auto bg-white/5 backdrop-blur-xl p-2 md:p-3 rounded-[2rem] shadow-2xl border border-white/10 flex flex-col sm:flex-row gap-3">
             <input
               type="text"
               placeholder="Enter Tracking ID (e.g. 7X2K...)"
-              className="flex-grow bg-white px-6 py-4 text-dark rounded-2xl focus:outline-none focus:ring-4 focus:ring-primary/20 transition-all font-medium placeholder:text-slate-400"
+              className="flex-grow bg-white px-6 py-4 text-dark rounded-2xl focus:outline-none focus:ring-4 focus:ring-primary/20 transition-all font-bold placeholder:text-slate-400 min-w-0"
               value={trackingNumber}
               onChange={(e) => setTrackingNumber(e.target.value)}
               required
             />
-            <Button type="submit" size="lg" className="whitespace-nowrap px-10 py-4 !rounded-2xl">
+            <Button type="submit" size="lg" className="whitespace-nowrap px-8 py-4 !rounded-2xl w-full sm:w-auto">
               Track Parcel
             </Button>
           </form>
-          <div className="mt-10 flex justify-center gap-4">
-            <Button variant="secondary" size="lg" onClick={() => navigate('/shipments/create')} className="!rounded-2xl">
+          
+          <div className="mt-12 flex flex-wrap justify-center gap-4">
+            <Button variant="secondary" size="lg" onClick={() => navigate('/shipments/create')} className="!rounded-2xl px-10">
               Start Shipping
             </Button>
-            <Button variant="outline" size="lg" onClick={() => navigate('/pricing')} className="!rounded-2xl border-white/50 text-white hover:bg-white/10">
+            <Button variant="outline" size="lg" onClick={() => navigate('/pricing')} className="!rounded-2xl border-white/20 text-white hover:bg-white/10 px-10">
               Check Rates
             </Button>
           </div>

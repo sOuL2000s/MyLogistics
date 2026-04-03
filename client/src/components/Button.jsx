@@ -13,9 +13,9 @@ const Button = ({ children, variant = 'primary', size = 'md', className = '', ..
   };
 
   const sizeStyles = {
-    sm: 'px-4 py-2 text-xs uppercase tracking-widest',
-    md: 'px-6 py-3 text-sm',
-    lg: 'px-8 py-4 text-base',
+    sm: 'px-3 py-1.5 md:px-4 md:py-2 text-[10px] md:text-xs uppercase tracking-widest',
+    md: 'px-5 py-2.5 md:px-6 md:py-3 text-xs md:text-sm',
+    lg: 'px-6 py-3 md:px-8 md:py-4 text-sm md:text-base',
   };
 
   return (
