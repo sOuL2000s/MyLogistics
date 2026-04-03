@@ -1,5 +1,5 @@
 import { Link, NavLink } from 'react-router-dom';
-import { FaBoxes, FaUsersCog, FaChartLine, FaChartBar, FaSignOutAlt, FaPlusSquare, FaTimes } from 'react-icons/fa';
+import { FaBoxes, FaUsersCog, FaChartLine, FaChartBar, FaSignOutAlt, FaPlusSquare, FaTimes, FaTruck } from 'react-icons/fa';
 import { useAuth } from '../hooks/useAuth';
 
 const AdminSidebar = ({ isOpen, toggleSidebar }) => {
@@ -7,23 +7,22 @@ const AdminSidebar = ({ isOpen, toggleSidebar }) => {
 
   const navLinks = [
     { name: 'Dashboard', path: '/admin', icon: <FaChartLine /> },
-    { name: 'Manage Shipments', path: '/admin/shipments', icon: <FaBoxes /> },
-    { name: 'Manage Users', path: '/admin/users', icon: <FaUsersCog /> },
-    { name: 'Reports', path: '/admin/reports', icon: <FaChartBar /> },
-    { name: 'Create Shipment', path: '/shipments/create', icon: <FaPlusSquare /> },
+    { name: 'Shipments', path: '/admin/shipments', icon: <FaBoxes /> },
+    { name: 'Users', path: '/admin/users', icon: <FaUsersCog /> },
+    { name: 'New Shipment', path: '/shipments/create', icon: <FaPlusSquare /> },
   ];
 
   return (
     <aside
-      className={`fixed top-0 left-0 h-full w-64 bg-dark text-white p-6 shadow-lg z-40 transition-transform duration-300 ease-in-out ${
+      className={`fixed top-0 left-0 h-full w-64 bg-slate-900 text-white p-8 border-r border-slate-800 z-40 transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
         isOpen ? 'translate-x-0' : '-translate-x-full'
       } lg:translate-x-0`}
     >
       <div className="flex items-center justify-between mb-10 mt-2">
-        <Link to="/admin" className="text-3xl font-bold text-primary flex items-center gap-2">
-          Admin
+        <Link to="/admin" className="text-2xl font-black text-white flex items-center gap-2">
+          <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-sm">A</div> Admin
         </Link>
-        <button onClick={toggleSidebar} className="text-white lg:hidden">
+        <button onClick={toggleSidebar} className="text-slate-400 lg:hidden">
           <FaTimes className="text-2xl" />
         </button>
       </div>
@@ -34,8 +33,10 @@ const AdminSidebar = ({ isOpen, toggleSidebar }) => {
               <NavLink
                 to={link.path}
                 className={({ isActive }) =>
-                  `flex items-center gap-3 p-3 rounded-lg text-lg hover:bg-gray-700 transition-all duration-200 ${
-                    isActive ? 'bg-primary text-white shadow-md' : 'text-light-gray'
+                  `flex items-center gap-4 px-5 py-4 rounded-2xl font-bold transition-all duration-300 ${
+                    isActive 
+                      ? 'bg-primary text-white shadow-lg shadow-primary/20 scale-[1.02]' 
+                      : 'text-slate-400 hover:text-white hover:bg-slate-800'
                   }`
                 }
               >
@@ -44,10 +45,10 @@ const AdminSidebar = ({ isOpen, toggleSidebar }) => {
               </NavLink>
             </li>
           ))}
-          <li>
+          <li className="pt-10">
             <button
               onClick={logout}
-              className="flex items-center gap-3 p-3 rounded-lg text-lg text-light-gray hover:bg-gray-700 w-full text-left transition-all duration-200 mt-6"
+              className="flex items-center gap-4 px-5 py-4 rounded-2xl font-bold text-slate-400 hover:text-white hover:bg-red-500/10 hover:text-red-500 w-full text-left transition-all duration-300"
             >
               <FaSignOutAlt />
               <span>Logout</span>

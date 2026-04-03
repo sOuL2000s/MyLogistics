@@ -8,3 +8,5 @@ const driver = (req, res, next) => {
 };
 
 module.exports = driver;
+
+module.exports = driver;

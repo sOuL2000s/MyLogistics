@@ -32,8 +32,10 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
               <NavLink
                 to={link.path}
                 className={({ isActive }) =>
-                  `flex items-center gap-3 p-3 rounded-lg text-lg hover:bg-gray-700 transition-all duration-200 ${
-                    isActive ? 'bg-primary text-white shadow-md' : 'text-light-gray'
+                  `flex items-center gap-4 px-5 py-4 rounded-2xl font-bold transition-all duration-300 ${
+                    isActive 
+                      ? 'bg-primary text-white shadow-lg shadow-primary/20 scale-[1.02]' 
+                      : 'text-slate-400 hover:text-white hover:bg-slate-800'
                   }`
                 }
               >
@@ -42,10 +44,10 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
               </NavLink>
             </li>
           ))}
-          <li>
+          <li className="pt-10">
             <button
               onClick={logout}
-              className="flex items-center gap-3 p-3 rounded-lg text-lg text-light-gray hover:bg-gray-700 w-full text-left transition-all duration-200 mt-6"
+              className="flex items-center gap-4 px-5 py-4 rounded-2xl font-bold text-slate-400 hover:text-white hover:bg-red-500/10 hover:text-red-500 w-full text-left transition-all duration-300"
             >
               <FaSignOutAlt />
               <span>Logout</span>

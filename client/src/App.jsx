@@ -53,14 +53,15 @@ function App() {
 
   const mainContentClass =
     user && !isAuthPage && !isPublicPage
-      ? `flex-1 transition-all duration-300 ${isSidebarOpen ? 'ml-64' : 'lg:ml-64'} p-4 lg:p-8`
-      : 'p-0'; // Landing pages usually need full width/no padding
+      ? `flex-1 transition-all duration-300 ${isSidebarOpen ? 'lg:ml-64' : 'lg:ml-64'} p-4 lg:p-8`
+      : 'p-0'; 
 
   return (
-    <div className="min-h-screen flex flex-col bg-light">
+    <div className="min-h-screen flex flex-col bg-[#fdfdfd] selection:bg-primary/20">
       <Navbar toggleSidebar={toggleSidebar} />
-      {renderSidebar()}
-      <main className={`transition-all duration-300 ${mainContentClass}`}>
+      <div className="flex flex-1">
+        {renderSidebar()}
+        <main className={`w-full ${mainContentClass} animate-fade-in`}>
         <Suspense fallback={<LoadingSpinner />}>
           <Routes>
             {/* Public Routes */}
@@ -98,6 +99,7 @@ function App() {
           </Routes>
         </Suspense>
       </main>
+      </div>
     </div>
   );
 }

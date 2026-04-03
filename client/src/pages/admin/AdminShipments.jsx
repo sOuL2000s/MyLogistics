@@ -10,18 +10,57 @@ import { FaEdit, FaTrash, FaEye, FaSearch } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { SHIPMENT_STATUSES } from '../../utils/constants';
+import api from '../../services/api';
+import { FaEdit, FaTrash, FaEye, FaSearch, FaTruck, FaUserPlus } from 'react-icons/fa';
 
 const AdminShipments = () => {
   const { shipments, loading, error, fetchShipments, updateShipment, deleteShipment } = useShipments();
   const navigate = useNavigate();
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [currentShipment, setCurrentShipment] = useState(null);
-  const [formData, setFormData] = useState({});
   const [searchTerm, setSearchTerm] = useState('');
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isAssignModalOpen, setIsAssignModalOpen] = useState(false);
+  const [currentShipment, setCurrentShipment] = useState(null);
+  const [drivers, setDrivers] = useState([]);
+  const [selectedDriver, setSelectedDriver] = useState('');
+  const [formData, setFormData] = useState({
+    currentStatus: '',
+    location: '',
+    notes: '',
+    expectedDeliveryDate: '',
+    cost: '',
+  });
 
   useEffect(() => {
     fetchShipments();
+    fetchDrivers();
   }, []);
+
+  const fetchDrivers = async () => {
+    try {
+      const { data } = await api.get('/users');
+      setDrivers(data.filter(u => u.role === 'driver'));
+    } catch (err) {
+      console.error('Failed to fetch drivers');
+    }
+  };
+
+  const handleAssignClick = (shipment) => {
+    setCurrentShipment(shipment);
+    setSelectedDriver(shipment.assignedDriver || '');
+    setIsAssignModalOpen(true);
+  };
+
+  const handleAssignSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await api.put(`/shipments/${currentShipment._id}/assign`, { driverId: selectedDriver });
+      toast.success('Driver assigned successfully');
+      setIsAssignModalOpen(false);
+      fetchShipments();
+    } catch (err) {
+      toast.error('Failed to assign driver');
+    }
+  };
 
   const handleEditClick = (shipment) => {
     setCurrentShipment(shipment);
@@ -139,6 +178,15 @@ const AdminShipments = () => {
                     >
                       <FaEye />
                     </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleAssignClick(s)}
+                      title="Assign Driver"
+                      className="border-amber-400 text-amber-500 hover:bg-amber-500 hover:text-white"
+                    >
+                      <FaTruck />
+                    </Button>
                     <Button variant="secondary" size="sm" onClick={() => handleEditClick(s)} title="Edit Shipment">
                       <FaEdit />
                     </Button>
@@ -205,6 +253,32 @@ const AdminShipments = () => {
           />
           <Button type="submit" className="w-full" disabled={loading}>
             {loading ? 'Updating...' : 'Update Shipment'}
+          </Button>
+        </form>
+      </Modal>
+
+      <Modal
+        isOpen={isAssignModalOpen}
+        onClose={() => setIsAssignModalOpen(false)}
+        title="Assign Delivery Driver"
+      >
+        <form onSubmit={handleAssignSubmit} className="space-y-4">
+          <label className="block text-sm font-medium text-gray-700">Select Driver</label>
+          <select
+            className="w-full p-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary"
+            value={selectedDriver}
+            onChange={(e) => setSelectedDriver(e.target.value)}
+            required
+          >
+            <option value="">-- Choose Driver --</option>
+            {drivers.map((d) => (
+              <option key={d._id} value={d._id}>
+                {d.name} ({d.email})
+              </option>
+            ))}
+          </select>
+          <Button type="submit" className="w-full">
+            Confirm Assignment
           </Button>
         </form>
       </Modal>

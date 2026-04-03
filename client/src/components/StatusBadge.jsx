@@ -1,33 +1,30 @@
 import React from 'react';
 
 const StatusBadge = ({ status }) => {
-  let colorClass = 'bg-gray-200 text-gray-800'; // Default
+  let classes = 'bg-slate-100 text-slate-600 border-slate-200';
 
   switch (status) {
     case 'Pending':
-      colorClass = 'bg-yellow-100 text-yellow-800';
+      classes = 'bg-amber-50 text-amber-600 border-amber-100';
       break;
     case 'In Transit':
-      colorClass = 'bg-blue-100 text-blue-800';
+      classes = 'bg-blue-50 text-blue-600 border-blue-100';
       break;
     case 'Out for Delivery':
-      colorClass = 'bg-purple-100 text-purple-800';
+      classes = 'bg-indigo-50 text-indigo-600 border-indigo-100';
       break;
     case 'Delivered':
-      colorClass = 'bg-green-100 text-green-800';
+      classes = 'bg-emerald-50 text-emerald-600 border-emerald-100';
       break;
     case 'Failed Attempt':
-      colorClass = 'bg-red-100 text-red-800';
-      break;
     case 'Cancelled':
-      colorClass = 'bg-red-100 text-red-800';
+      classes = 'bg-rose-50 text-rose-600 border-rose-100';
       break;
-    default:
-      colorClass = 'bg-gray-100 text-gray-700';
   }
 
   return (
-    <span className={`inline-flex items-center px-3 py-0.5 rounded-full text-sm font-medium ${colorClass}`}>
+    <span className={`inline-flex items-center px-3 py-1 rounded-lg text-xs font-black uppercase tracking-wider border ${classes}`}>
+      <span className="w-1.5 h-1.5 rounded-full bg-current mr-2 animate-pulse-soft"></span>
       {status}
     </span>
   );

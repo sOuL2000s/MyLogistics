@@ -24,8 +24,8 @@ router.route('/driver/my').get(protect, driver, getDriverShipments);
 router.route('/:id/assign').put(protect, admin, assignDriver);
 router
   .route('/:id')
-  .get(protect, getShipmentById) // User can view their own, Admin can view all
-  .put(protect, admin, updateShipment) // Admin can update, users might have restricted updates
-  .delete(protect, admin, deleteShipment); // Admin can delete
+  .get(protect, getShipmentById)
+  .put(protect, updateShipment) // Logic inside controller handles role-based restriction
+  .delete(protect, admin, deleteShipment);
 
 module.exports = router;

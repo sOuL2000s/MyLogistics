@@ -110,9 +110,9 @@ const getShipmentById = asyncHandler(async (req, res) => {
   }
 });
 
-// @desc    Update shipment details (Admin only, or restricted fields for owner)
+// @desc    Update shipment details (Admin or Driver)
 // @route   PUT /api/shipments/:id
-// @access  Private/Admin
+// @access  Private/Admin/Driver
 const updateShipment = asyncHandler(async (req, res) => {
   const {
     sender,
@@ -136,7 +136,7 @@ const updateShipment = asyncHandler(async (req, res) => {
     throw new Error('Shipment not found');
   }
 
-  // Only admin can update most fields or change status
+  // Admin can update everything
   if (req.user.role === 'admin') {
     shipment.sender = sender || shipment.sender;
     shipment.receiver = receiver || shipment.receiver;
@@ -155,6 +155,23 @@ const updateShipment = asyncHandler(async (req, res) => {
         status: currentStatus,
         location: location || shipment.currentLocation, // Use provided location or shipment's current
         notes: notes || `Status updated to ${currentStatus}`,
+        timestamp: new Date(),
+      });
+    }
+  } else if (req.user.role === 'driver') {
+    // Drivers can only update status and location of assigned shipments
+    if (shipment.assignedDriver?.toString() !== req.user._id.toString()) {
+      res.status(403);
+      throw new Error('Not authorized to update this shipment. Not assigned to you.');
+    }
+
+    if (currentStatus) {
+      shipment.currentStatus = currentStatus;
+      shipment.currentLocation = location || shipment.currentLocation;
+      shipment.statusHistory.push({
+        status: currentStatus,
+        location: location || shipment.currentLocation,
+        notes: notes || `Driver updated status to ${currentStatus}`,
         timestamp: new Date(),
       });
     }
